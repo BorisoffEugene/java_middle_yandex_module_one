@@ -8,6 +8,12 @@ public class CommentDTO {
     public CommentDTO() {
     }
 
+    public CommentDTO(Long id, String text, Long postId) {
+        this.id = id;
+        this.text = text;
+        this.postId = postId;
+    }
+
     public Long getId() {
         return id;
     }
