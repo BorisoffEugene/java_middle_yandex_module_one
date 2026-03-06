@@ -1,9 +1,10 @@
 package ru.yandex.practicum.repository;
 
 import ru.yandex.practicum.model.PostDTO;
+import ru.yandex.practicum.model.PostList;
 
 public interface PostRepository {
-    // search todo
+    PostList findByParams(String search, int pageNumber, int pageSize);
     PostDTO findById(Long id);
     PostDTO save(PostDTO post);
     PostDTO update(PostDTO post);

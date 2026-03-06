@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.practicum.model.PostDTO;
+import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.service.PostService;
 
 @RestController
@@ -15,6 +16,11 @@ public class PostController {
 
     public PostController(PostService postService) {
         this.postService = postService;
+    }
+
+    @GetMapping
+    public PostList findByParams(@RequestParam("search") String search, @RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) {
+        return postService.findByParams(search, pageNumber, pageSize);
     }
 
     @GetMapping("/{id}")

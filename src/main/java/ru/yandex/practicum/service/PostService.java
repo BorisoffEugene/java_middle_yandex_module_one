@@ -3,6 +3,7 @@ package ru.yandex.practicum.service;
 import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.model.PostDTO;
+import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.repository.PostRepository;
 
 @Service
@@ -11,6 +12,10 @@ public class PostService {
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
+    }
+
+    public PostList findByParams(String search, int pageNumber, int pageSize) {
+        return postRepository.findByParams(search, pageNumber, pageSize);
     }
 
     public PostDTO findById(Long id) {
