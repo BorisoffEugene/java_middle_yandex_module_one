@@ -9,4 +9,6 @@ public interface PostRepository {
     PostDTO update(PostDTO post);
     void deleteById(Long id);
     int incLikesCount(Long id);
+    void updateImage(Long id, byte[] image);
+    byte[] findImageById(Long id);
 }

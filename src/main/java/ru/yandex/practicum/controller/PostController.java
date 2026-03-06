@@ -1,6 +1,10 @@
 package ru.yandex.practicum.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.service.PostService;
 
@@ -18,7 +22,7 @@ public class PostController {
         return postService.findById(id);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping
     public PostDTO save(@RequestBody PostDTO post) {
         return postService.save(post);
     }
@@ -36,5 +40,17 @@ public class PostController {
     @PostMapping("{id}/likes")
     public int incLikesCount(@PathVariable("id") Long id) {
         return postService.incLikesCount(id);
+    }
+
+    @PutMapping("/{id}/image")
+    public ResponseEntity<String> uploadImage(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) throws Exception {
+        postService.uploadImage(id, file.getBytes());
+        return ResponseEntity.status(HttpStatus.OK).body("ok");
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getAvatar(@PathVariable("id") Long id) {
+        byte[] bytes = postService.getImage(id);
+        return ResponseEntity.ok().body(bytes);
     }
 }

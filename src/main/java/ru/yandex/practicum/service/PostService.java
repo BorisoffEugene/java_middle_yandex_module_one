@@ -32,4 +32,13 @@ public class PostService {
     public int incLikesCount(Long id) {
         return postRepository.incLikesCount(id);
     }
+
+    public void uploadImage(Long id, byte[] image) {
+        postRepository.updateImage(id, image);
+    }
+
+    public byte[] getImage(Long id) {
+        return postRepository.findImageById(id);
+    }
+
 }
