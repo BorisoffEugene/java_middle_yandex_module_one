@@ -7,7 +7,8 @@ create table if not exists blog.posts(
     title text not null,
     text text not null,
     tags text[],
-    likes_count integer not null default 0
+    likes_count integer not null default 0,
+    image bytea
 );
 
 comment on table blog.posts is 'Информация о постах блога';
@@ -16,6 +17,7 @@ comment on column blog.posts.title is 'Название';
 comment on column blog.posts.text is 'Текст';
 comment on column blog.posts.tags is 'Тэги';
 comment on column blog.posts.likes_count is 'Количество лайков';
+comment on column blog.posts.image is 'Картинка';
 
 create index if not exists idx_posts_title on blog.posts (title);
 create index if not exists idx_gin_posts_tags on blog.posts using GIN (tags);
