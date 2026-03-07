@@ -6,12 +6,12 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -51,7 +51,7 @@ public class JdbcPostRepository implements PostRepository{
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("text"),
-                        (List<String>) rs.getArray("tags"),
+                        Arrays.asList((String[])rs.getArray("tags").getArray()),
                         rs.getInt("likes_count"),
                         rs.getInt("comments_count")
                 ),
@@ -79,7 +79,7 @@ public class JdbcPostRepository implements PostRepository{
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("text"),
-                        (List<String>) rs.getArray("tags"),
+                        Arrays.asList((String[])rs.getArray("tags").getArray()),
                         rs.getInt("likes_count"),
                         rs.getInt("comments_count")
                 ),
