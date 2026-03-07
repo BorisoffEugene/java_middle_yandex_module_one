@@ -11,6 +11,10 @@ public class PostList {
     public PostList() {
     }
 
+    public PostList(List<PostDTO> posts) {
+        this.posts = posts;
+    }
+
     public List<PostDTO> getPosts() {
         return posts;
     }

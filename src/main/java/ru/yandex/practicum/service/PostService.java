@@ -6,16 +6,43 @@ import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.repository.PostRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class PostService {
     private final PostRepository postRepository;
+
+    private String parseSearch(String search, List<String> tags) {
+        String[] arrSearch = search.split(" ");
+        StringBuilder sb = new StringBuilder();
+
+        for (String s : arrSearch) {
+            s = s.trim();
+
+            if (s.isEmpty())
+                continue;
+            else if (s.charAt(0) == '#')
+                tags.add(s.substring(1));
+            else if (sb.isEmpty())
+                sb.append(s);
+            else
+                sb.append(" ").append(s);
+        }
+
+        return sb.toString();
+    }
 
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
     public PostList findByParams(String search, int pageNumber, int pageSize) {
-        return postRepository.findByParams(search, pageNumber, pageSize);
+        List<String> tags = new ArrayList<>();
+        String titleSearch = parseSearch(search, tags);
+        if (tags.isEmpty()) tags = null;
+
+        return postRepository.findByParams(titleSearch, tags, pageNumber, pageSize);
     }
 
     public PostDTO findById(Long id) {

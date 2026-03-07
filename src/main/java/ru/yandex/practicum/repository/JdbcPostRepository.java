@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 
@@ -17,6 +18,8 @@ import java.util.List;
 public class JdbcPostRepository implements PostRepository{
     @Value("${post.findByParams}")
     private String SQL_POST_FIND_BY_PARAMS;
+    @Value("${post.findPostsCount}")
+    private String SQL_POST_FIND_POSTS_COUNT;
     @Value("${post.findById}")
     private String SQL_POST_FIND_BY_ID;
     @Value("${post.save}")
@@ -39,8 +42,33 @@ public class JdbcPostRepository implements PostRepository{
     }
 
     @Override
-    public PostList findByParams(String search, int pageNumber, int pageSize) {
-        return null; //todo
+    public PostList findByParams(String titleSearch, List<String> tags, int pageNumber, int pageSize) {
+        int postsCount = findPostsCount(titleSearch, tags);
+
+        List<PostDTO> posts = jdbcTemplate.query(
+                SQL_POST_FIND_BY_PARAMS,
+                (rs, rowNum) -> new PostDTO(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("text"),
+                        (List<String>) rs.getArray("tags"),
+                        rs.getInt("likes_count"),
+                        rs.getInt("comments_count")
+                ),
+                titleSearch, tags, pageSize, (pageNumber - 1) * pageSize
+        );
+
+        PostList postList = new PostList(posts);
+        postList.setHasPrev(pageNumber > 1);
+        postList.setLastPage(Math.ceilDiv(postsCount, pageSize));
+        postList.setHasNext(pageNumber < postList.getLastPage());
+
+        return postList;
+    }
+
+    @Override
+    public int findPostsCount(String titleSearch, List<String> tags) {
+        return jdbcTemplate.queryForObject(SQL_POST_FIND_POSTS_COUNT, Integer.class, titleSearch, tags);
     }
 
     @Override
