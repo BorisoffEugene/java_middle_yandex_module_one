@@ -3,9 +3,12 @@ package ru.yandex.practicum.repository;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 
+import java.sql.Array;
 import java.util.List;
 
 public interface PostRepository {
+    Array convertTags(List<String> tags);
+    List<String> convertTags(Array tags);
     PostList findByParams(String titleSearch, List<String> tags, int pageNumber, int pageSize);
     int findPostsCount(String titleSearch, List<String> tags);
     PostDTO findById(Long id);

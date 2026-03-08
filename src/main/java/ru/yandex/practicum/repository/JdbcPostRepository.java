@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +40,22 @@ public class JdbcPostRepository implements PostRepository{
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public Array convertTags(List<String> tags) {
+        try {
+            return jdbcTemplate.getDataSource().getConnection().createArrayOf("text", tags.toArray(new String[0]));
+        } catch (SQLException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> convertTags(Array tags) {
+        try {
+            return Arrays.asList((String[])tags.getArray());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public PostList findByParams(String titleSearch, List<String> tags, int pageNumber, int pageSize) {
         int postsCount = findPostsCount(titleSearch, tags);
@@ -51,11 +66,11 @@ public class JdbcPostRepository implements PostRepository{
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("text"),
-                        Arrays.asList((String[])rs.getArray("tags").getArray()),
+                        convertTags(rs.getArray("tags")),
                         rs.getInt("likes_count"),
                         rs.getInt("comments_count")
                 ),
-                titleSearch, tags, pageSize, (pageNumber - 1) * pageSize
+                titleSearch, convertTags(tags), convertTags(tags),pageSize, (pageNumber - 1) * pageSize
         );
 
         PostList postList = new PostList(posts);
@@ -68,7 +83,7 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public int findPostsCount(String titleSearch, List<String> tags) {
-        return jdbcTemplate.queryForObject(SQL_POST_FIND_POSTS_COUNT, Integer.class, titleSearch, tags);
+        return jdbcTemplate.queryForObject(SQL_POST_FIND_POSTS_COUNT, Integer.class, titleSearch, convertTags(tags), convertTags(tags));
     }
 
     @Override
@@ -79,7 +94,7 @@ public class JdbcPostRepository implements PostRepository{
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("text"),
-                        Arrays.asList((String[])rs.getArray("tags").getArray()),
+                        convertTags(rs.getArray("tags")),
                         rs.getInt("likes_count"),
                         rs.getInt("comments_count")
                 ),
@@ -96,7 +111,7 @@ public class JdbcPostRepository implements PostRepository{
                     PreparedStatement ps = connection.prepareStatement(SQL_POST_SAVE, Statement.RETURN_GENERATED_KEYS);
                     ps.setString(1, post.getTitle());
                     ps.setString(2, post.getText());
-                    ps.setArray(3, connection.createArrayOf("VARCHAR", post.getTags().toArray(new String[0])));
+                    ps.setArray(3, convertTags(post.getTags()));
                     return ps;
                 },
                 keyHolder
@@ -108,7 +123,7 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public PostDTO update(PostDTO post) {
-        jdbcTemplate.update(SQL_POST_UPDATE, post.getTitle(), post.getText(), post.getTags(), post.getId());
+        jdbcTemplate.update(SQL_POST_UPDATE, post.getTitle(), post.getText(), convertTags(post.getTags()), post.getId());
         return findById(post.getId());
     }
 
