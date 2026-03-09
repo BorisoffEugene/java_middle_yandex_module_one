@@ -1,6 +1,5 @@
 package ru.yandex.practicum.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +48,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}/image")
-    public void uploadImage(@PathVariable("id") Long id, @RequestBody MultipartFile file) throws Exception {
+    public void uploadImage(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) throws Exception {
         postService.uploadImage(id, file.getBytes());
     }
 
