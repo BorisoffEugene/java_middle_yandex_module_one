@@ -8,7 +8,7 @@ import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.service.CommentService;
 
 @RestController
-@RequestMapping("/api/posts/{postId}/comments")
+@RequestMapping("/posts/{postId}/comments")
 public class CommentController {
     private final CommentService commentService;
 

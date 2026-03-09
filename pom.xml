@@ -43,6 +43,6 @@
   </dependencies>
 
   <build>
-    <finalName>java_middle_yandex_module_one</finalName>
+    <finalName>api</finalName>
   </build>
 </project>
