@@ -1,6 +1,8 @@
 package ru.yandex.practicum.repository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -45,31 +47,41 @@ public class JdbcCommentRepository implements CommentRepository{
     }
 
     @Override
-    public CommentDTO findById(Long postId, Long id) {
-        return jdbcTemplate.queryForObject(
-                SQL_COMMENT_FIND_BY_ID,
-                (rs, rowNum) -> new CommentDTO(
-                        rs.getLong("id"),
-                        rs.getString("text"),
-                        rs.getLong("post_id")
-                ),
-                id
-        );
+    public CommentDTO findById(Long id) {
+        try {
+            return jdbcTemplate.queryForObject(
+                    SQL_COMMENT_FIND_BY_ID,
+                    (rs, rowNum) -> new CommentDTO(
+                            rs.getLong("id"),
+                            rs.getString("text"),
+                            rs.getLong("post_id")
+                    ),
+                    id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
     public CommentDTO save(CommentDTO comment) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(
-                connection -> {
-                    PreparedStatement ps = connection.prepareStatement(SQL_COMMENT_SAVE, Statement.RETURN_GENERATED_KEYS);
-                    ps.setString(1, comment.getText());
-                    ps.setLong(2, comment.getPostId());
-                    return ps;
-                },
-                keyHolder
-        );
+        try {
+            jdbcTemplate.update(
+                    connection -> {
+                        PreparedStatement ps = connection.prepareStatement(SQL_COMMENT_SAVE, Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1, comment.getText());
+                        ps.setLong(2, comment.getPostId());
+                        return ps;
+                    },
+                    keyHolder
+            );
+        } catch (DataIntegrityViolationException e) {
+            return null;
+        }
+
+        if (keyHolder.getKeys() == null) return null;
 
         comment.setId((Long)keyHolder.getKeys().get("id"));
         return comment;
@@ -82,7 +94,7 @@ public class JdbcCommentRepository implements CommentRepository{
     }
 
     @Override
-    public void deleteById(Long postId, Long id) {
+    public void deleteById(Long id) {
         jdbcTemplate.update(SQL_COMMENT_DELETE_BY_ID, id);
     }
 }

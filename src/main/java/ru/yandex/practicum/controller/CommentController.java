@@ -22,8 +22,8 @@ public class CommentController {
     }
 
     @GetMapping("/{id}")
-    public CommentDTO findById(@PathVariable("postId") Long postId, @PathVariable("id") Long id) {
-        return commentService.findById(postId, id);
+    public CommentDTO findById(@PathVariable("id") Long id) {
+        return commentService.findById(id);
     }
 
     @PostMapping
@@ -37,7 +37,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("postId") Long postId, @PathVariable("id") Long id) {
-        commentService.deleteById(postId, id);
+    public void deleteById(@PathVariable("id") Long id) {
+        commentService.deleteById(id);
     }
 }

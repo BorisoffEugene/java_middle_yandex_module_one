@@ -49,13 +49,12 @@ public class PostController {
     }
 
     @PutMapping("/{id}/image")
-    public ResponseEntity<String> uploadImage(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) throws Exception {
+    public void uploadImage(@PathVariable("id") Long id, @RequestBody MultipartFile file) throws Exception {
         postService.uploadImage(id, file.getBytes());
-        return ResponseEntity.status(HttpStatus.OK).body("ok");
     }
 
     @GetMapping("/{id}/image")
-    public ResponseEntity<byte[]> getAvatar(@PathVariable("id") Long id) {
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") Long id) {
         byte[] bytes = postService.getImage(id);
         return ResponseEntity.ok().body(bytes);
     }

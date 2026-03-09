@@ -1,6 +1,7 @@
 package ru.yandex.practicum.repository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -88,18 +89,22 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public PostDTO findById(Long id) {
-        return jdbcTemplate.queryForObject(
-                SQL_POST_FIND_BY_ID,
-                (rs, rowNum) -> new PostDTO(
-                        rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getString("text"),
-                        convertTags(rs.getArray("tags")),
-                        rs.getInt("likes_count"),
-                        rs.getInt("comments_count")
-                ),
-                id
-        );
+        try {
+            return jdbcTemplate.queryForObject(
+                    SQL_POST_FIND_BY_ID,
+                    (rs, rowNum) -> new PostDTO(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("text"),
+                            convertTags(rs.getArray("tags")),
+                            rs.getInt("likes_count"),
+                            rs.getInt("comments_count")
+                    ),
+                    id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -117,7 +122,9 @@ public class JdbcPostRepository implements PostRepository{
                 keyHolder
         );
 
-        Long id = (Long)keyHolder.getKeys().get("id");
+        if (keyHolder.getKeys() == null) return null;
+
+        Long id = (Long)keyHolder.getKeys().getOrDefault("id", 0);
         return findById(id);
     }
 
@@ -145,7 +152,9 @@ public class JdbcPostRepository implements PostRepository{
                 keyHolder
         );
 
-        return (int)keyHolder.getKeys().get("likes_count");
+        if (keyHolder.getKeys() == null) return 0;
+
+        return (int)keyHolder.getKeys().getOrDefault("likes_count", 0);
     }
 
     @Override

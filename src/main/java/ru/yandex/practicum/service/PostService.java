@@ -40,6 +40,8 @@ public class PostService {
     public PostList findByParams(String search, int pageNumber, int pageSize) {
         List<String> tags = new ArrayList<>();
         String titleSearch = parseSearch(search, tags);
+        pageNumber =Math.max(1, pageNumber);
+        pageSize = Math.max(1, pageSize);
 
         return postRepository.findByParams(titleSearch, tags, pageNumber, pageSize);
     }

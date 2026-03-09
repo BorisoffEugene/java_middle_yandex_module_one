@@ -18,8 +18,8 @@ public class CommentService {
         return commentRepository.findAll(postId);
     }
 
-    public CommentDTO findById(Long postId, Long id) {
-        return commentRepository.findById(postId, id);
+    public CommentDTO findById(Long id) {
+        return commentRepository.findById(id);
     }
 
     public CommentDTO save(CommentDTO comment) {
@@ -30,7 +30,7 @@ public class CommentService {
         return commentRepository.update(comment);
     }
 
-    public void deleteById(Long postId, Long id) {
-        commentRepository.deleteById(postId, id);
+    public void deleteById(Long id) {
+        commentRepository.deleteById(id);
     }
 }

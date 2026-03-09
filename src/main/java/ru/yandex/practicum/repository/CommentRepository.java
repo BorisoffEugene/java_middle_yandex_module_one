@@ -6,8 +6,8 @@ import ru.yandex.practicum.model.CommentDTO;
 
 public interface CommentRepository {
     List<CommentDTO> findAll(Long postId);
-    CommentDTO findById(Long postId, Long id);
+    CommentDTO findById(Long id);
     CommentDTO save(CommentDTO comment);
     CommentDTO update(CommentDTO comment);
-    void deleteById(Long postId, Long id);
+    void deleteById(Long id);
 }
