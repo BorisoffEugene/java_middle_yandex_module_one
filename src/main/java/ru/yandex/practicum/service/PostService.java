@@ -75,5 +75,4 @@ public class PostService {
     public byte[] getImage(Long id) {
         return postRepository.findImageById(id);
     }
-
 }
