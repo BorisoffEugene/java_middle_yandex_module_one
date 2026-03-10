@@ -22,6 +22,8 @@ public class PostService {
 
             if (s.isEmpty())
                 continue;
+            else if (s.equals("#"))
+                continue;
             else if (s.charAt(0) == '#')
                 tags.add(s.substring(1));
             else if (sb.isEmpty())
@@ -40,7 +42,7 @@ public class PostService {
     public PostList findByParams(String search, int pageNumber, int pageSize) {
         List<String> tags = new ArrayList<>();
         String titleSearch = parseSearch(search, tags);
-        pageNumber =Math.max(1, pageNumber);
+        pageNumber = Math.max(1, pageNumber);
         pageSize = Math.max(1, pageSize);
 
         return postRepository.findByParams(titleSearch, tags, pageNumber, pageSize);

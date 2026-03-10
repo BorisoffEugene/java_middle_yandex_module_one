@@ -11,6 +11,7 @@ import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,19 +61,23 @@ public class JdbcPostRepository implements PostRepository{
     @Override
     public PostList findByParams(String titleSearch, List<String> tags, int pageNumber, int pageSize) {
         int postsCount = findPostsCount(titleSearch, tags);
+        List<PostDTO> posts;
 
-        List<PostDTO> posts = jdbcTemplate.query(
-                SQL_POST_FIND_BY_PARAMS,
-                (rs, rowNum) -> new PostDTO(
-                        rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getString("text"),
-                        convertTags(rs.getArray("tags")),
-                        rs.getInt("likes_count"),
-                        rs.getInt("comments_count")
-                ),
-                titleSearch, convertTags(tags), convertTags(tags),pageSize, (pageNumber - 1) * pageSize
-        );
+        if (postsCount > 0) {
+            posts = jdbcTemplate.query(
+                    SQL_POST_FIND_BY_PARAMS,
+                    (rs, rowNum) -> new PostDTO(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("text"),
+                            convertTags(rs.getArray("tags")),
+                            rs.getInt("likes_count"),
+                            rs.getInt("comments_count")
+                    ),
+                    titleSearch, convertTags(tags), convertTags(tags), pageSize, (pageNumber - 1) * pageSize
+                );
+        } else
+            posts = new ArrayList<>();
 
         PostList postList = new PostList(posts);
         postList.setHasPrev(pageNumber > 1);
