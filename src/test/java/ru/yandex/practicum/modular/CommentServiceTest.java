@@ -144,9 +144,9 @@ public class CommentServiceTest {
     @Test
     @DisplayName("Удаление комментария")
     void testDeleteById() {
-        Long userId = 1L;
-        doNothing().when(commentRepository).deleteById(userId);
-        commentService.deleteById(userId);
-        verify(commentRepository, times(1)).deleteById(userId);
+        Long id = 1L;
+        doNothing().when(commentRepository).deleteById(id);
+        commentService.deleteById(id);
+        verify(commentRepository, times(1)).deleteById(id);
     }
 }
