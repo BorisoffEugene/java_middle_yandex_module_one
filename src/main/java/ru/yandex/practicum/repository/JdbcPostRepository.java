@@ -44,7 +44,7 @@ public class JdbcPostRepository implements PostRepository{
 
     public Array convertTags(List<String> tags) {
         try {
-            return jdbcTemplate.getDataSource().getConnection().createArrayOf("text", tags.toArray(new String[0]));
+            return jdbcTemplate.getDataSource().getConnection().createArrayOf("varchar", tags.toArray(new String[0]));
         } catch (SQLException | NullPointerException e) {
             throw new RuntimeException(e);
         }

@@ -4,9 +4,9 @@ create schema if not exists blog;
 -- таблица posts
 create table if not exists blog.posts(
 	id bigserial primary key,
-    title text not null,
-    text text not null,
-    tags text[],
+    title varchar not null,
+    text varchar not null,
+    tags varchar array,
     likes_count integer not null default 0,
     image bytea
 );
@@ -20,12 +20,12 @@ comment on column blog.posts.likes_count is 'Количество лайков';
 comment on column blog.posts.image is 'Картинка';
 
 create index if not exists idx_posts_title on blog.posts (title);
-create index if not exists idx_gin_posts_tags on blog.posts using GIN (tags);
+create index if not exists idx_posts_tags on blog.posts (tags);
 
 -- таблица comments
 create table if not exists blog.comments(
 	id bigserial primary key,
-    text text not null,
+    text varchar not null,
 	post_id bigint not null references blog.posts(id) on delete cascade
 );
 

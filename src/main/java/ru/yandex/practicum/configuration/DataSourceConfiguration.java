@@ -17,9 +17,9 @@ public class DataSourceConfiguration {
 
     @Bean
     public DataSource dataSource(
-            @Value("${spring.postgres.datasource.url}") String url,
-            @Value("${spring.postgres.datasource.username}") String username,
-            @Value("${spring.postgres.datasource.password}") String password
+            @Value("${spring.datasource.url}") String url,
+            @Value("${spring.datasource.username}") String username,
+            @Value("${spring.datasource.password}") String password
     ) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(Driver.class.getName());
