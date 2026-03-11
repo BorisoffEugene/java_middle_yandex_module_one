@@ -2,7 +2,6 @@ package ru.yandex.practicum.integration.db;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -28,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Интеграционное (база данных) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcCommentRepositoryTest {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
@@ -120,7 +117,7 @@ public class JdbcCommentRepositoryTest {
         String text = "Изменили комментарий 1";
         Long postId = post.getId();
 
-        CommentDTO commentDTO = commentRepository.update(new CommentDTO(comment1.getId(), text, postId));
+        CommentDTO commentDTO = commentRepository.update(new CommentDTO(id, text, postId));
 
         assertNotNull(commentDTO, "Комментарий должен существовать");
         assertEquals(id, commentDTO.getId(), String.format("ID должен быть: %d", id));
@@ -129,7 +126,7 @@ public class JdbcCommentRepositoryTest {
     }
 
     @Test
-    @DisplayName("Добавление комментария к посту (пост / комментарий не существует)")
+    @DisplayName("Редактирование комментария к посту (пост / комментарий не существует)")
     void testUpdate_NotFound() {
         String text = "Тестовый комментарий";
         Long postId = -1L;

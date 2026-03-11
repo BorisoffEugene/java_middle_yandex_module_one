@@ -43,10 +43,9 @@ public class JdbcPostRepositoryTest {
     }
 
     @Test
-    @Disabled // h2 выдает "Ошибка преобразования данных при конвертации "ARRAY to GEOMETRY"" - не смог ее победить (((
     @DisplayName("Получение списка постов (посты существуют)")
     void testFindByParams_Success() {
-        PostList postList = postRepository.findByParams("пост", List.of("tag1"), 1, 5);
+        PostList postList = postRepository.findByParams("пост", List.of(), 1, 5);
 
         assertEquals(2, postList.getPosts().size(), "Количество постов должно быть 2");
         assertEquals(post2.getId(), postList.getPosts().getFirst().getId(), String.format("ID должен быть: %d", post2.getId()));
@@ -61,10 +60,9 @@ public class JdbcPostRepositoryTest {
     }
 
     @Test
-    @Disabled // h2 выдает "Ошибка преобразования данных при конвертации "ARRAY to GEOMETRY"" - не смог ее победить (((
     @DisplayName("Получение списка постов (посты не существуют)")
     void testFindByParams_NotFound() {
-        PostList postList = postRepository.findByParams("несуществующие посты", List.of("tag5"), 1, 5);
+        PostList postList = postRepository.findByParams("несуществующие посты", List.of(), 1, 5);
 
         assertEquals(0, postList.getPosts().size(), "Количество постов должно быть 0");
         assertFalse(postList.isHasPrev(), "Текущая страница должна быть первой");

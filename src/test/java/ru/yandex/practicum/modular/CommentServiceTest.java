@@ -132,7 +132,7 @@ public class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("Добавление комментария к посту (пост / комментарий не существует)")
+    @DisplayName("Редактирование комментария к посту (пост / комментарий не существует)")
     void testUpdate_NotFound() {
         Long id = 1L;
         String text = "Тестовый комментарий";
