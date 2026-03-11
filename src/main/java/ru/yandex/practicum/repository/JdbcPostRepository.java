@@ -158,20 +158,8 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public int incLikesCount(Long id) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(
-                connection -> {
-                    PreparedStatement ps = connection.prepareStatement(SQL_POST_INC_LIKES_COUNT, Statement.RETURN_GENERATED_KEYS);
-                    ps.setLong(1, id);
-                    return ps;
-                },
-                keyHolder
-        );
-
-        if (keyHolder.getKeys() == null) return 0;
-
-        return (int)keyHolder.getKeys().getOrDefault("likes_count", 0);
+        jdbcTemplate.update(SQL_POST_INC_LIKES_COUNT, id);
+        return findById(id).getLikesCount();
     }
 
     @Override

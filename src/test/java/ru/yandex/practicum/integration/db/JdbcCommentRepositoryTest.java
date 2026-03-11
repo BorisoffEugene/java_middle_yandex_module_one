@@ -17,9 +17,7 @@ import ru.yandex.practicum.repository.PostRepository;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
+
 
 @SpringJUnitConfig({DataSourceConfiguration.class, JdbcCommentRepository.class, JdbcPostRepository.class})
 @TestPropertySource({

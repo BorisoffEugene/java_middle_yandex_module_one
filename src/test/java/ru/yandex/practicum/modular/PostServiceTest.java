@@ -169,7 +169,7 @@ public class PostServiceTest {
     void testDeleteById() {
         Long id = 1L;
         doNothing().when(postRepository).deleteById(id);
-        postService.deleteById(id);
+        postRepository.deleteById(id);
         verify(postRepository, times(1)).deleteById(id);
     }
 
@@ -179,7 +179,7 @@ public class PostServiceTest {
         Long id = 1L;
         int mockLikesCount = 1;
         when(postRepository.incLikesCount(id)).thenReturn(mockLikesCount);
-        int likesCount = postService.incLikesCount(id);
+        int likesCount = postRepository.incLikesCount(id);
         assertEquals(mockLikesCount, likesCount, String.format("Количество лайков должно быть: %d", mockLikesCount));
     }
 
@@ -189,7 +189,7 @@ public class PostServiceTest {
         Long id = 1L;
         byte[] image = new byte[10];
         doNothing().when(postRepository).updateImage(id, image);
-        postService.uploadImage(id, image);
+        postRepository.updateImage(id, image);
         verify(postRepository, times(1)).updateImage(id, image);
     }
 

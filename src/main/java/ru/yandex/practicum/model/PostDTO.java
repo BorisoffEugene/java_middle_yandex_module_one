@@ -31,6 +31,15 @@ public class PostDTO {
         this.commentsCount = 0;
     }
 
+    public PostDTO(Long id, String title, String text, List<String> tags) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.tags = tags;
+        this.likesCount = 0;
+        this.commentsCount = 0;
+    }
+
     public Long getId() {
         return id;
     }
