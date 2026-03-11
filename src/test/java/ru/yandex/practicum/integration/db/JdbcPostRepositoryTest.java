@@ -1,10 +1,11 @@
 package ru.yandex.practicum.integration.db;
 
 import org.junit.jupiter.api.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
 import ru.yandex.practicum.configuration.DataSourceConfiguration;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
@@ -24,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @DisplayName("Интеграционное (база данных) тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcPostRepositoryTest {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private PostRepository postRepository;
 
