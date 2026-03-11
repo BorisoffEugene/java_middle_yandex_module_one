@@ -8,9 +8,6 @@ public class PostList {
     private boolean hasNext;
     private int lastPage;
 
-    public PostList() {
-    }
-
     public PostList(List<PostDTO> posts) {
         this.posts = posts;
     }
@@ -19,28 +16,28 @@ public class PostList {
         return posts;
     }
 
-    public void setPosts(List<PostDTO> posts) {
-        this.posts = posts;
-    }
-
     public boolean isHasPrev() {
         return hasPrev;
-    }
-
-    public void setHasPrev(boolean hasPrev) {
-        this.hasPrev = hasPrev;
     }
 
     public boolean isHasNext() {
         return hasNext;
     }
 
-    public void setHasNext(boolean hasNext) {
-        this.hasNext = hasNext;
-    }
-
     public int getLastPage() {
         return lastPage;
+    }
+
+    public void setPosts(List<PostDTO> posts) {
+        this.posts = posts;
+    }
+
+    public void setHasPrev(boolean hasPrev) {
+        this.hasPrev = hasPrev;
+    }
+
+    public void setHasNext(boolean hasNext) {
+        this.hasNext = hasNext;
     }
 
     public void setLastPage(int lastPage) {

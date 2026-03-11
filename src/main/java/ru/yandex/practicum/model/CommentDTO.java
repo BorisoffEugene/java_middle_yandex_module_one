@@ -14,24 +14,30 @@ public class CommentDTO {
         this.postId = postId;
     }
 
-    public Long getId() {
-        return id;
+    public CommentDTO(String text, Long postId) {
+        this.id = 0L;
+        this.text = text;
+        this.postId = postId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public Long getPostId() {
         return postId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public void setPostId(Long postId) {

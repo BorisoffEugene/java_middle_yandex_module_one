@@ -89,8 +89,8 @@ public class JdbcCommentRepository implements CommentRepository{
 
     @Override
     public CommentDTO update(CommentDTO comment) {
-        jdbcTemplate.update(SQL_COMMENT_UPDATE, comment.getText(), comment.getId());
-        return comment;
+        int rowsNumber = jdbcTemplate.update(SQL_COMMENT_UPDATE, comment.getText(), comment.getId());
+        return rowsNumber == 0 ? null : comment;
     }
 
     @Override

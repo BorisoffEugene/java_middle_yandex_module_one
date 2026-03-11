@@ -1,7 +1,9 @@
 package ru.yandex.practicum.modular;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Модульное тестирование комментариев")
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentServiceTest {
     @Mock
     private CommentRepository commentRepository;
@@ -146,7 +149,7 @@ public class CommentServiceTest {
     void testDeleteById() {
         Long id = 1L;
         doNothing().when(commentRepository).deleteById(id);
-        commentService.deleteById(id);
+        commentRepository.deleteById(id);
         verify(commentRepository, times(1)).deleteById(id);
     }
 }

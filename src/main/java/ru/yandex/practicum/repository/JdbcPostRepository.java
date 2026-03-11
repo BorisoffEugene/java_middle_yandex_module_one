@@ -29,6 +29,8 @@ public class JdbcPostRepository implements PostRepository{
     private String SQL_POST_UPDATE;
     @Value("${post.deleteById}")
     private String SQL_POST_DELETE_BY_ID;
+    @Value("${post.deleteAll}")
+    private String SQL_POST_DELETE_ALL;
     @Value("${post.incLikesCount}")
     private String SQL_POST_INC_LIKES_COUNT;
     @Value("${post.updateImage}")
@@ -38,11 +40,11 @@ public class JdbcPostRepository implements PostRepository{
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcPostRepository(JdbcTemplate jdbcTemplate) {
+    private JdbcPostRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Array convertTags(List<String> tags) {
+    private Array convertTags(List<String> tags) {
         try {
             return jdbcTemplate.getDataSource().getConnection().createArrayOf("varchar", tags.toArray(new String[0]));
         } catch (SQLException | NullPointerException e) {
@@ -50,12 +52,17 @@ public class JdbcPostRepository implements PostRepository{
         }
     }
 
-    public List<String> convertTags(Array tags) {
+    private List<String> convertTags(Array tags) {
+        Object[] objArray;
+
         try {
-            return Arrays.asList((String[])tags.getArray());
+            objArray = (Object[])tags.getArray();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        String[] strArray = Arrays.copyOf(objArray, objArray.length, String[].class);
+        return Arrays.asList(strArray);
     }
 
     @Override
@@ -142,6 +149,11 @@ public class JdbcPostRepository implements PostRepository{
     @Override
     public void deleteById(Long id) {
         jdbcTemplate.update(SQL_POST_DELETE_BY_ID, id);
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.execute(SQL_POST_DELETE_ALL);
     }
 
     @Override
