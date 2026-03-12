@@ -1,6 +1,5 @@
 package ru.yandex.practicum.repository;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,17 +15,6 @@ import java.util.List;
 
 @Repository
 public class JdbcCommentRepository implements CommentRepository{
-    @Value("${comment.findAll}")
-    private String SQL_COMMENT_FIND_ALL;
-    @Value("${comment.findById}")
-    private String SQL_COMMENT_FIND_BY_ID;
-    @Value("${comment.save}")
-    private String SQL_COMMENT_SAVE;
-    @Value("${comment.update}")
-    private String SQL_COMMENT_UPDATE;
-    @Value("${comment.deleteById}")
-    private String SQL_COMMENT_DELETE_BY_ID;
-
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcCommentRepository(JdbcTemplate jdbcTemplate) {
@@ -36,7 +24,7 @@ public class JdbcCommentRepository implements CommentRepository{
     @Override
     public List<CommentDTO> findAll(Long postId) {
         return jdbcTemplate.query(
-                SQL_COMMENT_FIND_ALL,
+                "select c.id, c.text, c.post_id from blog.comments c where c.post_id = ? order by c.id desc",
                 (rs, rowNum) -> new CommentDTO(
                         rs.getLong("id"),
                         rs.getString("text"),
@@ -50,7 +38,7 @@ public class JdbcCommentRepository implements CommentRepository{
     public CommentDTO findById(Long id) {
         try {
             return jdbcTemplate.queryForObject(
-                    SQL_COMMENT_FIND_BY_ID,
+                    "select c.id, c.text, c.post_id from blog.comments c where c.id = ?",
                     (rs, rowNum) -> new CommentDTO(
                             rs.getLong("id"),
                             rs.getString("text"),
@@ -70,7 +58,7 @@ public class JdbcCommentRepository implements CommentRepository{
         try {
             jdbcTemplate.update(
                     connection -> {
-                        PreparedStatement ps = connection.prepareStatement(SQL_COMMENT_SAVE, Statement.RETURN_GENERATED_KEYS);
+                        PreparedStatement ps = connection.prepareStatement("insert into blog.comments (text, post_id) values(?, ?)", Statement.RETURN_GENERATED_KEYS);
                         ps.setString(1, comment.getText());
                         ps.setLong(2, comment.getPostId());
                         return ps;
@@ -89,12 +77,12 @@ public class JdbcCommentRepository implements CommentRepository{
 
     @Override
     public CommentDTO update(CommentDTO comment) {
-        int rowsNumber = jdbcTemplate.update(SQL_COMMENT_UPDATE, comment.getText(), comment.getId());
+        int rowsNumber = jdbcTemplate.update("update blog.comments set text = ? where id = ?", comment.getText(), comment.getId());
         return rowsNumber == 0 ? null : comment;
     }
 
     @Override
     public void deleteById(Long id) {
-        jdbcTemplate.update(SQL_COMMENT_DELETE_BY_ID, id);
+        jdbcTemplate.update("delete from blog.comments where id = ?", id);
     }
 }

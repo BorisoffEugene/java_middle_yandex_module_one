@@ -4,9 +4,5 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource({
-        "classpath:application.properties",
-        "classpath:postgres_comment.properties",
-        "classpath:postgres_post.properties"
-})
+@PropertySource("classpath:application.properties")
 public class PropertySourceConfiguration {}

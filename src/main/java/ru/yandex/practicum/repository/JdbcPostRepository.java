@@ -1,6 +1,5 @@
 package ru.yandex.practicum.repository;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,27 +16,6 @@ import java.util.List;
 
 @Repository
 public class JdbcPostRepository implements PostRepository{
-    @Value("${post.findByParams}")
-    private String SQL_POST_FIND_BY_PARAMS;
-    @Value("${post.findPostsCount}")
-    private String SQL_POST_FIND_POSTS_COUNT;
-    @Value("${post.findById}")
-    private String SQL_POST_FIND_BY_ID;
-    @Value("${post.save}")
-    private String SQL_POST_SAVE;
-    @Value("${post.update}")
-    private String SQL_POST_UPDATE;
-    @Value("${post.deleteById}")
-    private String SQL_POST_DELETE_BY_ID;
-    @Value("${post.deleteAll}")
-    private String SQL_POST_DELETE_ALL;
-    @Value("${post.incLikesCount}")
-    private String SQL_POST_INC_LIKES_COUNT;
-    @Value("${post.updateImage}")
-    private String SQL_POST_UPDATE_IMAGE;
-    @Value("${post.findImageById}")
-    private String SQL_POST_FIND_IMAGE_BY_ID;
-
     private final JdbcTemplate jdbcTemplate;
 
     private JdbcPostRepository(JdbcTemplate jdbcTemplate) {
@@ -72,7 +50,7 @@ public class JdbcPostRepository implements PostRepository{
 
         if (postsCount > 0) {
             posts = jdbcTemplate.query(
-                    SQL_POST_FIND_BY_PARAMS,
+                    "select p.id, p.title, case when length(p.text) > 128 then substr(p.text, 1, 128)||'...' else p.text end text, p.tags, p.likes_count, count(c.id) comments_count from blog.posts p left join blog.comments c on c.post_id = p.id where p.title ilike '%'||?||'%' and (cardinality(?) = 0 or p.tags && ?) group by p.id, p.title, p.text, p.tags, p.likes_count order by id desc limit ? offset ?",
                     (rs, rowNum) -> new PostDTO(
                             rs.getLong("id"),
                             rs.getString("title"),
@@ -96,14 +74,18 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public int findPostsCount(String titleSearch, List<String> tags) {
-        return jdbcTemplate.queryForObject(SQL_POST_FIND_POSTS_COUNT, Integer.class, titleSearch, convertTags(tags), convertTags(tags));
+        return jdbcTemplate.queryForObject(
+                "select count(p.id) posts_count from blog.posts p where p.title ilike '%'||?||'%' and (cardinality(?) = 0 or p.tags && ?)",
+                Integer.class,
+                titleSearch, convertTags(tags), convertTags(tags)
+        );
     }
 
     @Override
     public PostDTO findById(Long id) {
         try {
             return jdbcTemplate.queryForObject(
-                    SQL_POST_FIND_BY_ID,
+                    "select p.id, p.title, p.text, p.tags, p.likes_count, count(c.id) comments_count from blog.posts p left join blog.comments c on c.post_id = p.id where p.id = ? group by p.id, p.title, p.text, p.tags, p.likes_count",
                     (rs, rowNum) -> new PostDTO(
                             rs.getLong("id"),
                             rs.getString("title"),
@@ -125,7 +107,7 @@ public class JdbcPostRepository implements PostRepository{
 
         jdbcTemplate.update(
                 connection -> {
-                    PreparedStatement ps = connection.prepareStatement(SQL_POST_SAVE, Statement.RETURN_GENERATED_KEYS);
+                    PreparedStatement ps = connection.prepareStatement("insert into blog.posts (title, text, tags) values (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                     ps.setString(1, post.getTitle());
                     ps.setString(2, post.getText());
                     ps.setArray(3, convertTags(post.getTags()));
@@ -142,35 +124,35 @@ public class JdbcPostRepository implements PostRepository{
 
     @Override
     public PostDTO update(PostDTO post) {
-        jdbcTemplate.update(SQL_POST_UPDATE, post.getTitle(), post.getText(), convertTags(post.getTags()), post.getId());
+        jdbcTemplate.update("update blog.posts set title = ?, text = ?, tags = ? where id = ?", post.getTitle(), post.getText(), convertTags(post.getTags()), post.getId());
         return findById(post.getId());
     }
 
     @Override
     public void deleteById(Long id) {
-        jdbcTemplate.update(SQL_POST_DELETE_BY_ID, id);
+        jdbcTemplate.update("delete from blog.posts where id = ?", id);
     }
 
     @Override
     public void deleteAll() {
-        jdbcTemplate.execute(SQL_POST_DELETE_ALL);
+        jdbcTemplate.execute("delete from blog.posts");
     }
 
     @Override
     public int incLikesCount(Long id) {
-        jdbcTemplate.update(SQL_POST_INC_LIKES_COUNT, id);
+        jdbcTemplate.update("update blog.posts set likes_count = likes_count + 1 where id = ?", id);
         return findById(id).getLikesCount();
     }
 
     @Override
     public void updateImage(Long id, byte[] image) {
-        jdbcTemplate.update(SQL_POST_UPDATE_IMAGE, image, id);
+        jdbcTemplate.update("update blog.posts set image = ? where id = ?", image, id);
     }
 
     @Override
     public byte[] findImageById(Long id) {
         return jdbcTemplate.query(
-                SQL_POST_FIND_IMAGE_BY_ID,
+                "select p.image from blog.posts p where p.id = ?",
                 preparedStatement -> preparedStatement.setLong(1, id),
                 resultSet -> resultSet.next() ? resultSet.getBytes("image") : null
         );

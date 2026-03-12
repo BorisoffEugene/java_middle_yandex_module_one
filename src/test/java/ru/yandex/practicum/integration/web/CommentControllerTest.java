@@ -26,11 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringJUnitConfig({DataSourceConfiguration.class, WebConfiguration.class})
 @WebAppConfiguration
-@TestPropertySource({
-        "classpath:test_application.properties",
-        "classpath:postgres_comment.properties",
-        "classpath:postgres_post.properties"
-})
+@TestPropertySource("classpath:test_application.properties")
 @DisplayName("Интеграционное (веб) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentControllerTest {

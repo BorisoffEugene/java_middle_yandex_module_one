@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringJUnitConfig({DataSourceConfiguration.class, JdbcPostRepository.class})
-@TestPropertySource({"classpath:test_application.properties", "classpath:postgres_post.properties"})
+@TestPropertySource("classpath:test_application.properties")
 @DisplayName("Интеграционное (база данных) тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcPostRepositoryTest {
