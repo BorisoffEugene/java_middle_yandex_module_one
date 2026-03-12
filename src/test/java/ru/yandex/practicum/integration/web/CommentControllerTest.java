@@ -65,7 +65,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментариев поста (комментарии существуют)")
     void testFindAll_Success() throws Exception {
-        mockMvc.perform(get(String.format("/posts/%d/comments", comment1.getPostId())))
+        mockMvc.perform(get("/posts/{postId}/comments", comment1.getPostId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -77,7 +77,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментариев поста (комментарии не существуют)")
     void testFindAll_NotFound() throws Exception {
-        mockMvc.perform(get(String.format("/posts/%d/comments", -1L)))
+        mockMvc.perform(get("/posts/{postId}/comments", -1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -86,7 +86,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментария поста (комментарий существует)")
     void testFindById_Success() throws Exception {
-        mockMvc.perform(get(String.format("/posts/%d/comments/%d", comment1.getPostId(), comment1.getId())))
+        mockMvc.perform(get("/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(comment1.getId()))
@@ -97,7 +97,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментария поста (комментарий не существует)")
     void testFindById_NotFound() throws Exception {
-        mockMvc.perform(get(String.format("/posts/%d/comments/%d", comment1.getPostId(), -1L)))
+        mockMvc.perform(get("/posts/{postId}/comments/{id}", comment1.getPostId(), -1L))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
@@ -107,9 +107,14 @@ public class CommentControllerTest {
     void testSave_Success() throws Exception {
         String text = "Комментарий 3";
         Long postId = post.getId();
-        String json = String.format("{\"text\": \"%s\", \"postId\": %d}", text, postId);
+        String json = String.format("""
+            {
+                "text": "%s",
+                "postId": %d
+            }
+            """, text, postId);
 
-        mockMvc.perform(post(String.format("/posts/%d/comments", postId))
+        mockMvc.perform(post("/posts/{postId}/comments", postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -117,7 +122,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.text").value(text))
                 .andExpect(jsonPath("$.postId").value(postId));
 
-        mockMvc.perform(get(String.format("/posts/%d/comments", postId)))
+        mockMvc.perform(get("/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
     }
@@ -127,14 +132,19 @@ public class CommentControllerTest {
     void testSave_NotFound() throws Exception {
         String text = "Комментарий 3";
         Long postId = -1L;
-        String json = String.format("{\"text\": \"%s\", \"postId\": %d}", text, postId);
+        String json = String.format("""
+            {
+                "text": "%s",
+                "postId": %d
+            }
+            """, text, postId);
 
-        mockMvc.perform(post(String.format("/posts/%d/comments", postId))
+        mockMvc.perform(post("/posts/{postId}/comments", postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(content().string(""));
 
-        mockMvc.perform(get(String.format("/posts/%d/comments", post.getId())))
+        mockMvc.perform(get("/posts/{postId}/comments", post.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -145,9 +155,15 @@ public class CommentControllerTest {
         Long id = comment1.getId();
         String text = "Изменили комментарий 1";
         Long postId = post.getId();
-        String json = String.format("{\"id\": %d, \"text\": \"%s\", \"postId\": %d}", id, text, postId);
+        String json = String.format("""
+            {
+                "id": %d,
+                "text": "%s",
+                "postId": %d
+            }
+            """, id, text, postId);
 
-        mockMvc.perform(put(String.format("/posts/%d/comments/%d", postId, id))
+        mockMvc.perform(put("/posts/{postId}/comments/{id}", postId, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -156,7 +172,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.text").value(text))
                 .andExpect(jsonPath("$.postId").value(postId));
 
-        mockMvc.perform(get(String.format("/posts/%d/comments", postId)))
+        mockMvc.perform(get("/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -168,14 +184,20 @@ public class CommentControllerTest {
         String text = "Тестовый комментарий";
         Long postId = post.getId();
 
-        String json = String.format("{\"id\": %d, \"text\": \"%s\", \"postId\": %d}", id, text, postId);
+        String json = String.format("""
+            {
+                "id": %d,
+                "text": "%s",
+                "postId": %d
+            }
+            """, id, text, postId);
 
-        mockMvc.perform(put(String.format("/posts/%d/comments/%d", postId, id))
+        mockMvc.perform(put("/posts/{postId}/comments/{id}", postId, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(content().string(""));
 
-        mockMvc.perform(get(String.format("/posts/%d/comments", postId)))
+        mockMvc.perform(get("/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -183,10 +205,10 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Удаление комментария")
     void testDeleteById() throws Exception {
-        mockMvc.perform(delete(String.format("/posts/%d/comments/%d", comment1.getPostId(), comment1.getId())))
+        mockMvc.perform(delete("/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get(String.format("/posts/%d/comments", comment1.getPostId())))
+        mockMvc.perform(get("/posts/{postId}/comments", comment1.getPostId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }

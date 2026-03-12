@@ -3,10 +3,13 @@ package ru.yandex.practicum.integration.web;
 import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -18,10 +21,8 @@ import ru.yandex.practicum.repository.PostRepository;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringJUnitConfig({DataSourceConfiguration.class, WebConfiguration.class})
 @WebAppConfiguration
@@ -54,137 +55,169 @@ public class PostControllerTest {
         post2 = postRepository.save(new PostDTO("Название поста 2", "Текст поста 2", List.of("tag1", "tag3")));
     }
 
-    /*
-
     @Test
     @DisplayName("Получение списка постов (посты существуют)")
-    void testFindByParams_Success() {
-        PostList postList = postRepository.findByParams("пост", List.of(), 1, 5);
-
-        assertEquals(2, postList.getPosts().size(), "Количество постов должно быть 2");
-        assertEquals(post2.getId(), postList.getPosts().getFirst().getId(), String.format("ID должен быть: %d", post2.getId()));
-        assertEquals(post2.getTitle(), postList.getPosts().getFirst().getTitle(), String.format("Наименование должно быть: %s", post2.getTitle()));
-        assertEquals(post2.getText(), postList.getPosts().getFirst().getText(), String.format("Текст должен быть: %s", post2.getText()));
-        assertEquals(post2.getTags().size(), postList.getPosts().getFirst().getTags().size(), String.format("Количество тэгов должно быть: %d", post2.getTags().size()));
-        assertEquals(post2.getLikesCount(), postList.getPosts().getFirst().getLikesCount(), String.format("Количество лайков должно быть: %d", post2.getLikesCount()));
-        assertEquals(post2.getCommentsCount(), postList.getPosts().getFirst().getCommentsCount(), String.format("Количество комментариев должно быть: %d", post2.getCommentsCount()));
-        assertFalse(postList.isHasPrev(), "Текущая страница должна быть первой");
-        assertFalse(postList.isHasNext(), "Текущая страница должна быть последней");
-        assertEquals(1, postList.getLastPage(), String.format("Количество страниц должно быть: %d", 1));
+    void testFindByParams_Success() throws Exception {
+        mockMvc.perform(get("/posts?search=пост&pageNumber=1&pageSize=5"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.posts", hasSize(2)))
+                .andExpect(jsonPath("$.posts[0].id").value(post2.getId()))
+                .andExpect(jsonPath("$.posts[0].title").value(post2.getTitle()))
+                .andExpect(jsonPath("$.posts[0].text").value(post2.getText()))
+                .andExpect(jsonPath("$.posts[0].tags", hasSize(post2.getTags().size())))
+                .andExpect(jsonPath("$.posts[0].likesCount").value(post2.getLikesCount()))
+                .andExpect(jsonPath("$.posts[0].commentsCount").value(post2.getCommentsCount()))
+                .andExpect(jsonPath("$.hasPrev").value(false))
+                .andExpect(jsonPath("$.hasNext").value(false))
+                .andExpect(jsonPath("$.lastPage").value(1));
     }
 
     @Test
     @DisplayName("Получение списка постов (посты не существуют)")
-    void testFindByParams_NotFound() {
-        PostList postList = postRepository.findByParams("несуществующие посты", List.of(), 1, 5);
-
-        assertEquals(0, postList.getPosts().size(), "Количество постов должно быть 0");
-        assertFalse(postList.isHasPrev(), "Текущая страница должна быть первой");
-        assertFalse(postList.isHasNext(), "Текущая страница должна быть последней");
-        assertEquals(0, postList.getLastPage(), String.format("Количество страниц должно быть: %d", 0));
+    void testFindByParams_NotFound() throws Exception {
+        mockMvc.perform(get("/posts?search=несуществующий пост&pageNumber=1&pageSize=5"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.posts", hasSize(0)));
     }
 
     @Test
     @DisplayName("Получение поста (пост существует)")
-    void testFindById_Success() {
-        PostDTO postDTO = postRepository.findById(post1.getId());
-
-        assertNotNull(postDTO, "Пост должен существовать");
-        assertEquals(post1.getId(), postDTO.getId(), String.format("ID должен быть: %d", post1.getId()));
-        assertEquals(post1.getTitle(), postDTO.getTitle(), String.format("Наименование должно быть: %s", post1.getTitle()));
-        assertEquals(post1.getText(), postDTO.getText(), String.format("Текст должен быть: %s", post1.getText()));
-        assertEquals(post1.getTags().size(), postDTO.getTags().size(), String.format("Количество тэгов должно быть: %d", post1.getTags().size()));
-        assertEquals(post1.getLikesCount(), postDTO.getLikesCount(), String.format("Количество лайков должно быть: %d", post1.getLikesCount()));
-        assertEquals(post1.getCommentsCount(), postDTO.getCommentsCount(), String.format("Количество комментариев должно быть: %d", post1.getCommentsCount()));
+    void testFindById_Success() throws Exception {
+        mockMvc.perform(get("/posts/{id}", post1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(post1.getId()))
+                .andExpect(jsonPath("$.title").value(post1.getTitle()))
+                .andExpect(jsonPath("$.text").value(post1.getText()))
+                .andExpect(jsonPath("$.tags", hasSize(post1.getTags().size())))
+                .andExpect(jsonPath("$.likesCount").value(post1.getLikesCount()))
+                .andExpect(jsonPath("$.commentsCount").value(post1.getCommentsCount()));
     }
 
     @Test
     @DisplayName("Получение поста (пост не существует)")
-    void testFindById_NotFound() {
-        Long id = -1L;
-        PostDTO postDTO = postRepository.findById(id);
-        assertNull(postDTO, "Поста не должно существовать");
+    void testFindById_NotFound() throws Exception {
+        mockMvc.perform(get("/posts/{id}", -1L))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 
     @Test
     @DisplayName("Добавление поста")
-    void testSave() {
+    void testSave() throws Exception {
         String title = "Наименование поста 3";
         String text = "Текст поста 3";
         List<String> tags = List.of("tag1", "tag2");
         int likesCount = 0;
         int commentsCount = 0;
 
-        PostDTO postDTO = postRepository.save(new PostDTO(title, text, tags));
 
-        assertNotNull(postDTO, "Пост должен существовать");
-        assertEquals(title, postDTO.getTitle(), String.format("Наименование должно быть: %s", title));
-        assertEquals(text, postDTO.getText(), String.format("Текст должен быть: %s", text));
-        assertEquals(tags.size(), postDTO.getTags().size(), String.format("Количество тэгов должно быть: %d", tags.size()));
-        assertEquals(likesCount, postDTO.getLikesCount(), String.format("Количество лайков должно быть: %d", likesCount));
-        assertEquals(commentsCount, postDTO.getCommentsCount(), String.format("Количество комментариев должно быть: %d", commentsCount));
+        String json = String.format("""
+                {
+                    "title": "%s",
+                    "text": "%s",
+                    "tags": ["%s", "%s"]
+                }
+                """, title, text, tags.getFirst(), tags.getLast());
+
+        mockMvc.perform(post("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.title").value(title))
+                .andExpect(jsonPath("$.text").value(text))
+                .andExpect(jsonPath("$.tags", hasSize(tags.size())))
+                .andExpect(jsonPath("$.likesCount").value(likesCount))
+                .andExpect(jsonPath("$.commentsCount").value(commentsCount));
+
+        mockMvc.perform(get("/posts?search=&pageNumber=1&pageSize=5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.posts", hasSize(3)));
     }
 
     @Test
     @DisplayName("Редактирование поста")
-    void testUpdate() {
+    void testUpdate() throws Exception {
         Long id = post1.getId();
         String title = "Изменение наименования поста";
         String text = "Изменение текста поста";
-        List<String> tags = List.of("tag1", "tag2", "tag3");
+        List<String> tags = List.of("tag1", "tag2");
 
-        PostDTO postDTO = postRepository.update(new PostDTO(id, title, text, tags));
+        String json = String.format("""
+                {
+                    "id": %d,
+                    "title": "%s",
+                    "text": "%s",
+                    "tags": ["%s", "%s"]
+                }
+                """, id, title, text, tags.getFirst(), tags.getLast());
 
-        assertNotNull(postDTO, "Пост должен существовать");
-        assertEquals(id, postDTO.getId(), String.format("ID должен быть: %d", id));
-        assertEquals(title, postDTO.getTitle(), String.format("Наименование должно быть: %s", title));
-        assertEquals(text, postDTO.getText(), String.format("Текст должен быть: %s", text));
-        assertEquals(tags.size(), postDTO.getTags().size(), String.format("Количество тэгов должно быть: %d", tags.size()));
-        assertEquals(post1.getLikesCount(), postDTO.getLikesCount(), String.format("Количество лайков должно быть: %d", post1.getLikesCount()));
-        assertEquals(post1.getCommentsCount(), postDTO.getCommentsCount(), String.format("Количество комментариев должно быть: %d", post1.getCommentsCount()));
+        mockMvc.perform(put("/posts/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.title").value(title))
+                .andExpect(jsonPath("$.text").value(text))
+                .andExpect(jsonPath("$.tags", hasSize(tags.size())))
+                .andExpect(jsonPath("$.likesCount").value(post1.getLikesCount()))
+                .andExpect(jsonPath("$.commentsCount").value(post1.getCommentsCount()));
+
+        mockMvc.perform(get("/posts?search=&pageNumber=1&pageSize=5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.posts", hasSize(2)));
     }
-*/
+
     @Test
     @DisplayName("Удаление поста")
     void testDeleteById() throws Exception {
-        mockMvc.perform(delete(String.format("/posts/%d", post1.getId())))
+        mockMvc.perform(delete("/posts/{id}", post1.getId()))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/posts?search=&pageNumber=1&pageSize=5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.posts", hasSize(1)));
     }
-/*
+
     @Test
     @DisplayName("Инкремент числа лайков поста")
-    void testIncLikesCount() {
-        int likesCount = postRepository.incLikesCount(post1.getId());
-        assertEquals(1, likesCount, String.format("Количество лайков должно быть: %d", 1));
+    void testIncLikesCount() throws Exception {
+        mockMvc.perform(post("/posts/{id}/likes", post1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("1"));
     }
 
     @Test
-    @DisplayName("Обновление картинки поста")
-    void testUploadImage() {
-        byte[] image = new byte[]{1, 2, 3, 4};
-        postRepository.updateImage(post1.getId(), image);
-        byte[] fromDb = postRepository.findImageById(post1.getId());
-        assertArrayEquals(image, fromDb);
-    }
+    @DisplayName("Обновление / Получение картинки поста (пост существует)")
+    void testGetImage_Success() throws Exception {
+        byte[] image = new byte[]{(byte) 137, 80, 78, 71};
+        MockMultipartFile file = new MockMultipartFile("image", "image.png", MediaType.IMAGE_PNG_VALUE, image);
 
-    @Test
-    @DisplayName("Получение картинки поста (пост существует)")
-    void testGetImage_Success() {
-        postRepository.updateImage(post1.getId(), new byte[]{1, 2, 3, 4});
-        byte[] image = postRepository.findImageById(post1.getId());
-        assertNotNull(image, "Картинка должна существовать");
+        RequestPostProcessor putMethodProcessor = request -> {
+            request.setMethod("PUT");
+            return request;
+        };
+
+        mockMvc.perform(multipart("/posts/{id}/image", post1.getId())
+                        .file(file)
+                        .with(putMethodProcessor)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/posts/{id}/image", post1.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().bytes(image));
     }
 
     @Test
     @DisplayName("Получение картинки поста (пост / картинка не существует)")
-    void testGetImage_NotFound() {
-        byte[] image = postRepository.findImageById(-1L);
-        assertNull(image, "Картинка не должна существовать");
+    void testGetImage_NotFound() throws Exception {
+        mockMvc.perform(get("/posts/{id}/image", -1L))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
-
-     */
 }

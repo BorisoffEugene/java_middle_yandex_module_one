@@ -32,6 +32,7 @@
 * Maven 3.8
 * Tomcat 11
 * PostgreSQL 18
+* H2 (для интеграционного тестирования)
 
 ## Технологии
 * Java 21
@@ -45,27 +46,28 @@
 ## Установка и запуск
 1. **Клонируйте репозиторий:**
     ```bash
-    todo
+    git clone https://github.com/BorisoffEugene/java_middle_yandex_module_one.git
     ```
 2. **Перейдите в папку проекта:**
     ```bash
-    todo
+    cd java_middle_yandex_module_one
     ```
 3. **Соберите проект с помощью Maven:**
     ```bash
-    todo
+    mvn clean package
     ```
-4. **Скопируйте war-архив на сервер Tomcat:**
+4. **Запустите тесты с помощью Maven:**
+   ```bash
+   mvn test
+   ```
+5. **Скопируйте war-архив на сервер Tomcat:**
     ```bash
-    todo
+    copy target/api.war %CATALINA_HOME%/webapps/api.war 
     ```
-5. **Запустите приложение:**
+6. **Запустите приложение:**
     ```text
-    todo
+    Откройте браузер. В строке адреса введите http://localhost/
     ```
-
-## Использование
-todo
-
+   
 ## Автор
 **Борисов Евгений**

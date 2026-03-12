@@ -42,7 +42,7 @@ public class PostController {
         postService.deleteById(id);
     }
 
-    @PostMapping("{id}/likes")
+    @PostMapping("/{id}/likes")
     public int incLikesCount(@PathVariable("id") Long id) {
         return postService.incLikesCount(id);
     }
