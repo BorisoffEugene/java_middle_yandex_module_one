@@ -5,8 +5,8 @@ plugins {
 }
 
 group = 'ru.yandex.practicum'
-version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
+version = '1.0'
+description = 'Яндекс практикум. Мидл Java-разработчик. Модуль 1. Спринт 4'
 
 java {
 	toolchain {
@@ -22,11 +22,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-h2console'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
