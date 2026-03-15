@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.repository.CommentRepository;
 import ru.yandex.practicum.service.CommentService;
@@ -15,7 +16,7 @@ import ru.yandex.practicum.service.CommentService;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+@SpringBootTest
 @DisplayName("Модульное тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentServiceTest {

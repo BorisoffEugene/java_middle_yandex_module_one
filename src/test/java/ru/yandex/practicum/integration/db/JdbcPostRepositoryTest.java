@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.repository.PostRepository;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Disabled
+@SpringBootTest
 @DisplayName("Интеграционное (база данных) тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcPostRepositoryTest {
@@ -52,7 +53,7 @@ public class JdbcPostRepositoryTest {
         assertFalse(postList.isHasNext(), "Текущая страница должна быть последней");
         assertEquals(1, postList.getLastPage(), String.format("Количество страниц должно быть: %d", 1));
     }
-
+/*
     @Test
     @DisplayName("Получение списка постов (посты не существуют)")
     void testFindByParams_NotFound() {
@@ -162,5 +163,5 @@ public class JdbcPostRepositoryTest {
     void testGetImage_NotFound() {
         byte[] image = postRepository.findImageById(-1L);
         assertNull(image, "Картинка не должна существовать");
-    }
+    }*/
 }

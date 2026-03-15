@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.repository.PostRepository;
@@ -15,7 +16,7 @@ import ru.yandex.practicum.service.PostService;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+@SpringBootTest
 @DisplayName("Модульное тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class PostServiceTest {

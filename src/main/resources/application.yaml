@@ -1,7 +1,11 @@
 spring:
   application:
     name: Яндекс практикум. Мидл Java-разработчик. Модуль 1. SpringBoot
+  sql:
+    init:
+      mode: always
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
+

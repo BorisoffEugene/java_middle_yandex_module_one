@@ -3,6 +3,7 @@ package ru.yandex.practicum.integration.db;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.repository.CommentRepository;
@@ -12,8 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-@Disabled
+@SpringBootTest
 @DisplayName("Интеграционное (база данных) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcCommentRepositoryTest {
