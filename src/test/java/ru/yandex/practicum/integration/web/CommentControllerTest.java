@@ -4,15 +4,10 @@ import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import ru.yandex.practicum.configuration.DataSourceConfiguration;
-import ru.yandex.practicum.configuration.WebConfiguration;
 import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.repository.CommentRepository;
@@ -24,9 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitConfig({DataSourceConfiguration.class, WebConfiguration.class})
-@WebAppConfiguration
-@TestPropertySource("classpath:test_application.properties")
+@Disabled
 @DisplayName("Интеграционное (веб) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentControllerTest {

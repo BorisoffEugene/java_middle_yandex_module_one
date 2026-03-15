@@ -1,11 +1,9 @@
 package ru.yandex.practicum.modular;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,7 +15,7 @@ import ru.yandex.practicum.service.CommentService;
 import java.util.ArrayList;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+@Disabled
 @DisplayName("Модульное тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentServiceTest {

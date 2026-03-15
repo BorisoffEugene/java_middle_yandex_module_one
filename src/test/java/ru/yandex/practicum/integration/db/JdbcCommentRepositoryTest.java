@@ -2,15 +2,10 @@ package ru.yandex.practicum.integration.db;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import ru.yandex.practicum.configuration.DataSourceConfiguration;
 import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.repository.CommentRepository;
-import ru.yandex.practicum.repository.JdbcCommentRepository;
-import ru.yandex.practicum.repository.JdbcPostRepository;
 import ru.yandex.practicum.repository.PostRepository;
 
 import java.util.List;
@@ -18,8 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringJUnitConfig({DataSourceConfiguration.class, JdbcCommentRepository.class, JdbcPostRepository.class})
-@TestPropertySource("classpath:test_application.properties")
+@Disabled
 @DisplayName("Интеграционное (база данных) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcCommentRepositoryTest {

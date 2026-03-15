@@ -18,7 +18,7 @@ import java.util.List;
 public class JdbcPostRepository implements PostRepository{
     private final JdbcTemplate jdbcTemplate;
 
-    private JdbcPostRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcPostRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
