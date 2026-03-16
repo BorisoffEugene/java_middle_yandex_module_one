@@ -1,17 +1,13 @@
 package ru.yandex.practicum.modular;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
 import ru.yandex.practicum.repository.PostRepository;
@@ -20,7 +16,7 @@ import ru.yandex.practicum.service.PostService;
 import java.util.ArrayList;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 @DisplayName("Модульное тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class PostServiceTest {

@@ -1,16 +1,14 @@
-# Яндекс практикум. Мидл Java-разработчик. Модуль 1
+# Яндекс практикум. Мидл Java-разработчик. Модуль 1. Спринт 4
 
-Бэкенд приложения-блога с использованием Spring Framework
+Переписать бэкенд приложения-блога с использованием инструмента Spring Boot и Spring Boot Test
 
 ## Описание
 Этот проект демонстрирует умение работать с 
-* Spring Framework 
-* сервелет-контейнером Tomcat
-* git-репозиторием
-* системой сборки Maven
+* Spring Boot
+* системой сборки Gradle
 * базами данных 
 * REST-запросами
-* модульным и интеграционным тестированием средствами Spring и JUnit5 + мокирование
+* модульным и интеграционным тестированием средствами Spring Boot Test
 * паттерном MVC
 
 ## Функционал
@@ -29,19 +27,17 @@
 
 ## Требования
 * Java JDK 21
-* Maven 3.8
-* Tomcat 11
+* Gradle
 * PostgreSQL 18
 * H2 (для интеграционного тестирования)
 
 ## Технологии
 * Java 21
-* Spring Framework
-* JUnit5 
-* Maven
+* Spring Boot
+* Spring Boot Test
+* Gradle
 * PostgreSQL
 * H2
-* Mock
 
 ## Установка и запуск
 1. **Клонируйте репозиторий:**
@@ -52,22 +48,18 @@
     ```bash
     cd java_middle_yandex_module_one
     ```
-3. **Соберите проект с помощью Maven:**
+3. **Соберите проект с помощью Gradle:**
     ```bash
-    mvn clean package
+    ./gradlew clean build
     ```
-4. **Запустите тесты с помощью Maven:**
+4. **Запустите тесты с помощью Gradle:**
    ```bash
-   mvn test
+   ./gradlew test
    ```
-5. **Скопируйте war-архив на сервер Tomcat:**
+5. **Запустите приложение с помощью Gradle:**
     ```bash
-    copy target/api.war %CATALINA_HOME%/webapps/api.war 
-    ```
-6. **Запустите приложение:**
-    ```text
-    Откройте браузер. В строке адреса введите http://localhost/
-    ```
-   
+    ./gradlew bootrun
+    ``` 
+
 ## Автор
 **Борисов Евгений**

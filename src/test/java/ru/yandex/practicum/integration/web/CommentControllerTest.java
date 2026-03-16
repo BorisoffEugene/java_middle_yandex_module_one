@@ -3,16 +3,11 @@ package ru.yandex.practicum.integration.web;
 import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import ru.yandex.practicum.configuration.DataSourceConfiguration;
-import ru.yandex.practicum.configuration.WebConfiguration;
 import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.repository.CommentRepository;
@@ -24,28 +19,24 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitConfig({DataSourceConfiguration.class, WebConfiguration.class})
-@WebAppConfiguration
-@TestPropertySource("classpath:test_application.properties")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 @DisplayName("Интеграционное (веб) тестирование комментариев")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CommentControllerTest {
     @Autowired
-    private WebApplicationContext wac;
+    private MockMvc mockMvc;
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private PostRepository postRepository;
 
-    private MockMvc mockMvc;
     private PostDTO post;
     private CommentDTO comment1;
     private CommentDTO comment2;
 
     @BeforeEach
     void beforeEach() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-
         // очищаем все данные
         postRepository.deleteAll();
 
@@ -57,11 +48,10 @@ public class CommentControllerTest {
         comment2 = commentRepository.save(new CommentDTO("Комментарий 2", post.getId()));
     }
 
-
     @Test
     @DisplayName("Получение комментариев поста (комментарии существуют)")
     void testFindAll_Success() throws Exception {
-        mockMvc.perform(get("/posts/{postId}/comments", comment1.getPostId()))
+        mockMvc.perform(get("/api/posts/{postId}/comments", comment1.getPostId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -73,7 +63,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментариев поста (комментарии не существуют)")
     void testFindAll_NotFound() throws Exception {
-        mockMvc.perform(get("/posts/{postId}/comments", -1L))
+        mockMvc.perform(get("/api/posts/{postId}/comments", -1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -82,7 +72,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментария поста (комментарий существует)")
     void testFindById_Success() throws Exception {
-        mockMvc.perform(get("/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
+        mockMvc.perform(get("/api/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(comment1.getId()))
@@ -93,7 +83,7 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Получение комментария поста (комментарий не существует)")
     void testFindById_NotFound() throws Exception {
-        mockMvc.perform(get("/posts/{postId}/comments/{id}", comment1.getPostId(), -1L))
+        mockMvc.perform(get("/api/posts/{postId}/comments/{id}", comment1.getPostId(), -1L))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
@@ -110,7 +100,7 @@ public class CommentControllerTest {
             }
             """, text, postId);
 
-        mockMvc.perform(post("/posts/{postId}/comments", postId)
+        mockMvc.perform(post("/api/posts/{postId}/comments", postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -118,7 +108,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.text").value(text))
                 .andExpect(jsonPath("$.postId").value(postId));
 
-        mockMvc.perform(get("/posts/{postId}/comments", postId))
+        mockMvc.perform(get("/api/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
     }
@@ -135,12 +125,12 @@ public class CommentControllerTest {
             }
             """, text, postId);
 
-        mockMvc.perform(post("/posts/{postId}/comments", postId)
+        mockMvc.perform(post("/api/posts/{postId}/comments", postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(content().string(""));
 
-        mockMvc.perform(get("/posts/{postId}/comments", post.getId()))
+        mockMvc.perform(get("/api/posts/{postId}/comments", post.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -159,7 +149,7 @@ public class CommentControllerTest {
             }
             """, id, text, postId);
 
-        mockMvc.perform(put("/posts/{postId}/comments/{id}", postId, id)
+        mockMvc.perform(put("/api/posts/{postId}/comments/{id}", postId, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -168,7 +158,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.text").value(text))
                 .andExpect(jsonPath("$.postId").value(postId));
 
-        mockMvc.perform(get("/posts/{postId}/comments", postId))
+        mockMvc.perform(get("/api/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -188,12 +178,12 @@ public class CommentControllerTest {
             }
             """, id, text, postId);
 
-        mockMvc.perform(put("/posts/{postId}/comments/{id}", postId, id)
+        mockMvc.perform(put("/api/posts/{postId}/comments/{id}", postId, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(content().string(""));
 
-        mockMvc.perform(get("/posts/{postId}/comments", postId))
+        mockMvc.perform(get("/api/posts/{postId}/comments", postId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -201,10 +191,10 @@ public class CommentControllerTest {
     @Test
     @DisplayName("Удаление комментария")
     void testDeleteById() throws Exception {
-        mockMvc.perform(delete("/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
+        mockMvc.perform(delete("/api/posts/{postId}/comments/{id}", comment1.getPostId(), comment1.getId()))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/posts/{postId}/comments", comment1.getPostId()))
+        mockMvc.perform(get("/api/posts/{postId}/comments", comment1.getPostId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
     }

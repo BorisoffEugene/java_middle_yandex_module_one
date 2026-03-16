@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.CommentDTO;
 import ru.yandex.practicum.service.CommentService;
 
 @RestController
-@RequestMapping({"/posts/{postId}/comments", "/posts/undefined/comments"})
+@RequestMapping({"api/posts/{postId}/comments", "api/posts/undefined/comments"})
 public class CommentController {
     private final CommentService commentService;
 

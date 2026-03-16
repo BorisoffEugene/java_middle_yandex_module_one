@@ -3,13 +3,10 @@ package ru.yandex.practicum.integration.db;
 import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import ru.yandex.practicum.configuration.DataSourceConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.model.PostDTO;
 import ru.yandex.practicum.model.PostList;
-import ru.yandex.practicum.repository.JdbcPostRepository;
 import ru.yandex.practicum.repository.PostRepository;
 
 import java.util.ArrayList;
@@ -20,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringJUnitConfig({DataSourceConfiguration.class, JdbcPostRepository.class})
-@TestPropertySource("classpath:test_application.properties")
+@SpringBootTest
 @DisplayName("Интеграционное (база данных) тестирование постов")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class JdbcPostRepositoryTest {
