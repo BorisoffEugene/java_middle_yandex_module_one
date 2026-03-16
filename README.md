@@ -50,20 +50,16 @@
     ```
 3. **Соберите проект с помощью Gradle:**
     ```bash
-    todo
+    ./gradlew clean build
     ```
 4. **Запустите тесты с помощью Gradle:**
    ```bash
-   todo
+   ./gradlew test
    ```
 5. **Запустите приложение с помощью Gradle:**
     ```bash
-    todo
-    ```
-6. **Откройте проект в браузере:**
-   ```text
-   todo
-   ```
-   
+    ./gradlew bootrun
+    ``` 
+
 ## Автор
 **Борисов Евгений**

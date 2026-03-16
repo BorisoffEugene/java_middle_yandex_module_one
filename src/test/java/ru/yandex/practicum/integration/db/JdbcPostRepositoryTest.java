@@ -53,7 +53,7 @@ public class JdbcPostRepositoryTest {
         assertFalse(postList.isHasNext(), "Текущая страница должна быть последней");
         assertEquals(1, postList.getLastPage(), String.format("Количество страниц должно быть: %d", 1));
     }
-/*
+
     @Test
     @DisplayName("Получение списка постов (посты не существуют)")
     void testFindByParams_NotFound() {
@@ -163,5 +163,5 @@ public class JdbcPostRepositoryTest {
     void testGetImage_NotFound() {
         byte[] image = postRepository.findImageById(-1L);
         assertNull(image, "Картинка не должна существовать");
-    }*/
+    }
 }
